@@ -1,0 +1,36 @@
+﻿# ---- OS / Editor
+.DS_Store
+Thumbs.db
+
+# ---- Android (keep wrapper files)
+android/.gradle/
+android/.idea/
+android/local.properties
+android/**/build/
+android/**/*.iml
+android/captures/
+*.keystore
+*.jks
+
+# ---- ML / Python
+ml/.venv*/
+ml/venv/
+ml/**/__pycache__/
+ml/.ipynb_checkpoints/
+
+# Datasets & splits (keep these OUT of git)
+ml/data/raw/
+ml/data/train/
+ml/data/val/
+ml/data/test/
+
+# Large training artifacts
+ml/out/food_fp32_keras.h5
+ml/out/*.log
+ml/out/*.tmp
+
+# ---- Keep these SMALL runtime assets (OK to commit)
+# ml/out/food_int8.tflite  (commit this)
+# android/app/src/main/assets/labels.txt  (commit)
+# android/app/src/main/assets/calories.json  (commit)
+

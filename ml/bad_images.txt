@@ -1,0 +1,52 @@
+DUPLICATE	data\raw\boulettes\087.jpg	DUPE_OF	data\raw\boulettes\082.jpg
+DUPLICATE	data\raw\boulettes\088.jpg	DUPE_OF	data\raw\boulettes\083.jpg
+DUPLICATE	data\raw\boulettes\089.jpg	DUPE_OF	data\raw\boulettes\066.jpg
+DUPLICATE	data\raw\boulettes\091.jpg	DUPE_OF	data\raw\boulettes\084.jpg
+DUPLICATE	data\raw\boulettes\096.jpg	DUPE_OF	data\raw\boulettes\081.jpg
+DUPLICATE	data\raw\boulettes\097.jpg	DUPE_OF	data\raw\boulettes\077.jpg
+DUPLICATE	data\raw\boulettes\190.jpg	DUPE_OF	data\raw\boulettes\067.jpg
+DUPLICATE	data\raw\boulettes\247.jpg	DUPE_OF	data\raw\boulettes\245.jpg
+DUPLICATE	data\raw\boulettes\262.jpg	DUPE_OF	data\raw\boulettes\071.jpg
+DUPLICATE	data\raw\dholl_puri\dholl_puri_071.jpg	DUPE_OF	data\raw\dholl_puri\dholl_puri_047.jpg
+DUPLICATE	data\raw\dholl_puri\dholl_puri_073.jpg	DUPE_OF	data\raw\dholl_puri\dholl_puri_045.jpg
+DUPLICATE	data\raw\dholl_puri\dholl_puri_084.jpg	DUPE_OF	data\raw\dholl_puri\dholl_puri_065.jpg
+DUPLICATE	data\raw\faratha\088.jpg	DUPE_OF	data\raw\faratha\087.jpg
+DUPLICATE	data\raw\faratha\093.jpg	DUPE_OF	data\raw\faratha\061.jpg
+DUPLICATE	data\raw\faratha\097.jpg	DUPE_OF	data\raw\faratha\067.jpg
+DUPLICATE	data\raw\faratha\109.jpg	DUPE_OF	data\raw\faratha\062.jpg
+DUPLICATE	data\raw\faratha\138.jpg	DUPE_OF	data\raw\faratha\058.jpg
+QUALITY	data\raw\gato_piment\gato_piment_001.png
+QUALITY	data\raw\gato_piment\gato_piment_107.png
+DUPLICATE	data\raw\jalebi\002.jpg	DUPE_OF	data\raw\jalebi\001.jpg
+DUPLICATE	data\raw\jalebi\098.jpg	DUPE_OF	data\raw\jalebi\058.jpg
+DUPLICATE	data\raw\jalebi\115.jpg	DUPE_OF	data\raw\jalebi\077.jpg
+DUPLICATE	data\raw\jalebi\238.jpg	DUPE_OF	data\raw\jalebi\237.jpg
+DUPLICATE	data\raw\jalebi\277.jpg	DUPE_OF	data\raw\jalebi\028.JPG
+DUPLICATE	data\raw\mine\212 (2).jpg	DUPE_OF	data\raw\mine\114 (3).jpg
+DUPLICATE	data\raw\mine\217 (3).jpg	DUPE_OF	data\raw\mine\15 (4).jpg
+DUPLICATE	data\raw\mine\242 (2).jpg	DUPE_OF	data\raw\mine\239 (2).jpg
+DUPLICATE	data\raw\mine\243 (2).jpg	DUPE_OF	data\raw\mine\240 (2).jpg
+DUPLICATE	data\raw\mine\27 (4).jpg	DUPE_OF	data\raw\mine\110 (4).jpg
+DUPLICATE	data\raw\mine\28 (4).jpg	DUPE_OF	data\raw\mine\112 (4).jpg
+DUPLICATE	data\raw\mine\46 (3).jpg	DUPE_OF	data\raw\mine\262 (2).jpg
+DUPLICATE	data\raw\mine\51 (4).jpg	DUPE_OF	data\raw\mine\2 (4).jpg
+DUPLICATE	data\raw\mine\6 (4).jpg	DUPE_OF	data\raw\mine\264 (3).jpg
+DUPLICATE	data\raw\mine\66 (4).jpg	DUPE_OF	data\raw\mine\3 (4).jpg
+DUPLICATE	data\raw\mine\7 (4).jpg	DUPE_OF	data\raw\mine\101 (4).jpg
+DUPLICATE	data\raw\mine\77 (3).jpg	DUPE_OF	data\raw\mine\25 (4).jpg
+DUPLICATE	data\raw\mine\84 (4).jpg	DUPE_OF	data\raw\mine\4 (4).jpg
+DUPLICATE	data\raw\mine\85 (4).jpg	DUPE_OF	data\raw\mine\17 (4).jpg
+DUPLICATE	data\raw\mine\91 (2).jpg	DUPE_OF	data\raw\mine\90 (2).jpg
+DUPLICATE	data\raw\mine\96 (3).jpg	DUPE_OF	data\raw\mine\83 (3).jpg
+DUPLICATE	data\raw\pizza\080.jpg	DUPE_OF	data\raw\pizza\077.jpg
+DUPLICATE	data\raw\pizza\088.jpg	DUPE_OF	data\raw\pizza\048.jpg
+DUPLICATE	data\raw\riz_frite\096.jpg	DUPE_OF	data\raw\riz_frite\092.jpg
+DUPLICATE	data\raw\riz_frite\098.jpg	DUPE_OF	data\raw\riz_frite\082.jpg
+DUPLICATE	data\raw\riz_frite\211.jpg	DUPE_OF	data\raw\riz_frite\209.jpg
+DUPLICATE	data\raw\samosa\082.jpg	DUPE_OF	data\raw\samosa\079.jpg
+DUPLICATE	data\raw\samosa\083.jpg	DUPE_OF	data\raw\samosa\080.jpg
+DUPLICATE	data\raw\samosa\084.jpg	DUPE_OF	data\raw\samosa\081.jpg
+DUPLICATE	data\raw\samosa\119.jpg	DUPE_OF	data\raw\samosa\064.jpg
+DUPLICATE	data\raw\samosa\248.jpg	DUPE_OF	data\raw\samosa\245.jpg
+DUPLICATE	data\raw\samosa\249.jpg	DUPE_OF	data\raw\samosa\246.jpg
+DUPLICATE	data\raw\samosa\250.jpg	DUPE_OF	data\raw\samosa\247.jpg

@@ -1,0 +1,82 @@
+[
+  {
+    "id": "boulettes",
+    "display_name": "Boulettes",
+    "unit": "5 pieces",
+    "presets": [5, 10, 15],
+    "kcal_per_unit": 180,
+    "uncertainty_pct": 15
+  },
+  {
+    "id": "dholl_puri",
+    "display_name": "Dholl Puri",
+    "unit": "piece",
+    "presets": [1, 2, 3],
+    "kcal_per_unit": 300,
+    "uncertainty_pct": 12
+  },
+  {
+    "id": "du_the",
+    "display_name": "Du Thé (Milk Tea)",
+    "unit": "glass",
+    "presets": [1, 2],
+    "kcal_per_unit": 120,
+    "uncertainty_pct": 10
+  },
+  {
+    "id": "faratha",
+    "display_name": "Faratha / Paratha",
+    "unit": "piece",
+    "presets": [1, 2, 3],
+    "kcal_per_unit": 250,
+    "uncertainty_pct": 15
+  },
+  {
+    "id": "gato_piment",
+    "display_name": "Gato Piment (Chili Cakes)",
+    "unit": "4 pieces",
+    "presets": [4, 8, 12],
+    "kcal_per_unit": 220,
+    "uncertainty_pct": 15
+  },
+  {
+    "id": "jalebi",
+    "display_name": "Jalebi",
+    "unit": "piece",
+    "presets": [1, 2, 3],
+    "kcal_per_unit": 150,
+    "uncertainty_pct": 20
+  },
+  {
+    "id": "mine",
+    "display_name": "Mine (Fried Noodles)",
+    "unit": "plate",
+    "presets": [0.5, 1, 1.5],
+    "kcal_per_unit": 600,
+    "uncertainty_pct": 15
+  },
+  {
+    "id": "pizza",
+    "display_name": "Pizza Slice",
+    "unit": "slice",
+    "presets": [1, 2, 3],
+    "kcal_per_unit": 285,
+    "uncertainty_pct": 12
+  },
+  {
+    "id": "riz_frite",
+    "display_name": "Riz Frite (Fried Rice)",
+    "unit": "plate",
+    "presets": [0.5, 1, 1.5],
+    "kcal_per_unit": 650,
+    "uncertainty_pct": 15
+  },
+  {
+    "id": "samosa",
+    "display_name": "Samosa",
+    "unit": "piece",
+    "presets": [1, 2, 3],
+    "kcal_per_unit": 130,
+    "uncertainty_pct": 15
+  }
+]

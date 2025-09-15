@@ -1,0 +1,92 @@
+[
+  {
+    "id": "dholl_puri",
+    "display_name": "Dholl Puri",
+    "synonyms": ["dhal puri", "dal puri", "roti dholl"],
+    "visual_cues": ["thin yellowish flatbread", "folded with curry/chutney"],
+    "common_confusions": ["farata_paratha"],
+    "decision_status": "keep",
+    "notes": "Merged dholl and dal puri into one class."
+  },
+  {
+    "id": "gato_piment",
+    "display_name": "Gato Piment",
+    "synonyms": ["gateau piment", "vadai", "lentil fritter"],
+    "visual_cues": ["small round fritters", "greenish-brown", "crispy"],
+    "common_confusions": ["samosa"],
+    "decision_status": "keep",
+    "notes": ""
+  },
+  {
+    "id": "farata_paratha",
+    "display_name": "Farata / Paratha",
+    "synonyms": ["paratha", "parantha"],
+    "visual_cues": ["layered flatbread", "visible lamination"],
+    "common_confusions": ["dholl_puri"],
+    "decision_status": "keep",
+    "notes": ""
+  },
+  {
+    "id": "mine_frite",
+    "display_name": "Mine Frite",
+    "synonyms": ["fried noodles", "chow mein"],
+    "visual_cues": ["noodle strands", "stir-fried with veg/egg"],
+    "common_confusions": ["fried_rice"],
+    "decision_status": "keep",
+    "notes": ""
+  },
+  {
+    "id": "boulettes",
+    "display_name": "Boulettes",
+    "synonyms": ["dumplings mauritian", "fish balls"],
+    "visual_cues": ["dumplings in broth", "served in bowls"],
+    "common_confusions": [],
+    "decision_status": "keep",
+    "notes": ""
+  },
+  {
+    "id": "alouda",
+    "display_name": "Alouda",
+    "synonyms": ["alooda", "basil seed drink"],
+    "visual_cues": ["milk drink with basil seeds/agar", "served in glass"],
+    "common_confusions": [],
+    "decision_status": "keep",
+    "notes": ""
+  },
+  {
+    "id": "fried_rice",
+    "display_name": "Fried Rice",
+    "synonyms": ["mauritian fried rice"],
+    "visual_cues": ["separate rice grains", "wok-fried look"],
+    "common_confusions": ["biryani"],
+    "decision_status": "keep",
+    "notes": "Looks similar to biryani, rely on user correction."
+  },
+  {
+    "id": "biryani",
+    "display_name": "Biryani",
+    "synonyms": ["briani mauritian"],
+    "visual_cues": ["long-grain spiced rice", "garnished with onion/potato"],
+    "common_confusions": ["fried_rice"],
+    "decision_status": "keep",
+    "notes": "Keep separate, though confusion with fried rice likely."
+  },
+  {
+    "id": "hakien",
+    "display_name": "Hakien",
+    "synonyms": ["spring roll mauritian"],
+    "visual_cues": ["cylindrical fried roll", "golden-brown crispy shell"],
+    "common_confusions": ["samosa"],
+    "decision_status": "keep",
+    "notes": ""
+  },
+  {
+    "id": "samosa",
+    "display_name": "Samosa",
+    "synonyms": ["samoosa", "sambuusa"],
+    "visual_cues": ["triangular pastry", "golden-brown"],
+    "common_confusions": ["hakien"],
+    "decision_status": "keep",
+    "notes": ""
+  }
+]
