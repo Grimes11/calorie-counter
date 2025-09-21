@@ -13,6 +13,9 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavType
@@ -20,6 +23,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.calorie_counter.auth.AuthViewModel
+import com.example.calorie_counter.auth.LoginScreen
 import com.example.calorie_counter.data.CaloriesRepo
 import com.example.calorie_counter.data.KcalResult
 import com.example.calorie_counter.data.MealEntry
@@ -37,8 +42,8 @@ import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import androidx.compose.runtime.rememberCoroutineScope
 import org.tensorflow.lite.support.common.FileUtil
+import androidx.lifecycle.viewmodel.compose.viewModel
 
 class MainActivity : ComponentActivity() {
 
@@ -53,6 +58,20 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             CaloriecounterTheme {
+                // --- Firebase Auth state
+                val authViewModel: AuthViewModel = viewModel()
+                val isLoggedIn by authViewModel.isLoggedIn.collectAsState()
+
+                if (!isLoggedIn) {
+                    // Show login/registration until authenticated
+                    LoginScreen(
+                        authViewModel = authViewModel,
+                        onLoginSuccess = { /* UI will auto-switch when isLoggedIn becomes true */ }
+                    )
+                    return@CaloriecounterTheme
+                }
+
+                // --- Your app after successful login
                 val nav = rememberNavController()
                 val context = LocalContext.current
                 val scope = rememberCoroutineScope()
@@ -69,7 +88,6 @@ class MainActivity : ComponentActivity() {
                         composable("detect") {
                             DetectScreen(
                                 onConfirm = { confirmedLabel ->
-                                    // mark source for logging later
                                     nav.currentBackStackEntry?.savedStateHandle?.set("lastSource", "gallery")
                                     nav.navigate("portion/$confirmedLabel")
                                 },
@@ -136,7 +154,6 @@ class MainActivity : ComponentActivity() {
                                 foodId = foodId,
                                 repo = caloriesRepo,
                                 onComputed = { result: KcalResult ->
-                                    // carry forward source ("gallery" | "camera")
                                     val source = nav.previousBackStackEntry
                                         ?.savedStateHandle
                                         ?.get<String>("lastSource") ?: "unknown"
@@ -181,13 +198,11 @@ class MainActivity : ComponentActivity() {
 
                         // Food log
                         composable("foodlog") {
-                            // Re-read each time we navigate here
                             val items = mealLog.today()
                             FoodLogScreen(
                                 items = items,
                                 repo = mealLog,
                                 onRefresh = {
-                                    // Easiest refresh is to re-navigate to the same route
                                     nav.popBackStack()
                                     nav.navigate("foodlog")
                                 },
@@ -197,11 +212,10 @@ class MainActivity : ComponentActivity() {
                             )
                         }
 
-
                         // Settings
                         composable("settings") {
                             SettingsScreen(
-                                prefs = prefsRepo,
+                                prefs = PrefsRepo(this@MainActivity),
                                 onBack = { nav.popBackStack() }
                             )
                         }

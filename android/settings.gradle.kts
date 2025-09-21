@@ -11,6 +11,7 @@ pluginManagement {
         gradlePluginPortal()
     }
 }
+
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
@@ -20,5 +21,6 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "calorie-counter"
+
+// ✅ include app module
 include(":app")
- 

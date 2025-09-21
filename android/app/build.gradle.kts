@@ -2,6 +2,9 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+
+    // Firebase Gradle plugin (version is declared at the project level)
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -33,20 +36,16 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
-    kotlinOptions {
-        jvmTarget = "11"
-    }
+    kotlinOptions { jvmTarget = "11" }
 
     buildFeatures {
         compose = true
-        // We’re using TFLite Interpreter + assets, not ML Model Binding.
         mlModelBinding = false
     }
 
-    // ✅ Correct way to prevent compression of .tflite for your setup
+    // Don’t compress TFLite models in assets/
     androidResources {
         noCompress.add("tflite")
-        // or: noCompress += "tflite"
     }
 }
 
@@ -60,7 +59,6 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
-    implementation(libs.androidx.camera.core)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
@@ -70,23 +68,26 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
+    // Navigation
     implementation("androidx.navigation:navigation-compose:2.9.4")
 
+    // JSON
     implementation("com.google.code.gson:gson:2.11.0")
 
+    // DataStore
     implementation("androidx.datastore:datastore-preferences:1.1.1")
 
-
+    // CameraX
     implementation("androidx.camera:camera-core:1.4.0")
     implementation("androidx.camera:camera-camera2:1.4.0")
     implementation("androidx.camera:camera-lifecycle:1.4.0")
     implementation("androidx.camera:camera-view:1.4.0")
 
-
-
     // TensorFlow Lite
     implementation("org.tensorflow:tensorflow-lite:2.14.0")
     implementation("org.tensorflow:tensorflow-lite-support:0.4.4")
-    // Optional:
-    // implementation("org.tensorflow:tensorflow-lite-gpu:2.14.0")
+
+    // --- Firebase (BoM + Auth) ---
+    implementation(platform("com.google.firebase:firebase-bom:33.2.0"))
+    implementation("com.google.firebase:firebase-auth-ktx")
 }
