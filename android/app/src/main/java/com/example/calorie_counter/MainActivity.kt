@@ -18,13 +18,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.calorie_counter.auth.AuthViewModel
-import com.example.calorie_counter.auth.LoginScreen
+// NOTE: LoginScreen is in the root package (based on your tree)
+import com.example.calorie_counter.LoginScreen
+
 import com.example.calorie_counter.data.CaloriesRepo
 import com.example.calorie_counter.data.KcalResult
 import com.example.calorie_counter.data.MealEntry
@@ -43,7 +46,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.tensorflow.lite.support.common.FileUtil
-import androidx.lifecycle.viewmodel.compose.viewModel
 
 class MainActivity : ComponentActivity() {
 
@@ -51,6 +53,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
+        // Repos as before
         val caloriesRepo = CaloriesRepo(this)
         val prefsRepo = PrefsRepo(this)
         val gson = Gson()
@@ -58,20 +61,23 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             CaloriecounterTheme {
-                // --- Firebase Auth state
+                // --- Firebase Auth state (via your AuthViewModel) ---
                 val authViewModel: AuthViewModel = viewModel()
                 val isLoggedIn by authViewModel.isLoggedIn.collectAsState()
 
+                // Gate the app behind LoginScreen until authenticated
                 if (!isLoggedIn) {
-                    // Show login/registration until authenticated
+                    // IMPORTANT: your LoginScreen uses parameter names `vm` and `onAuthed`
                     LoginScreen(
-                        authViewModel = authViewModel,
-                        onLoginSuccess = { /* UI will auto-switch when isLoggedIn becomes true */ }
+                        vm = authViewModel,
+                        onAuthed = {
+                            // Nothing needed: when isLoggedIn flips to true, the UI below will show.
+                        }
                     )
                     return@CaloriecounterTheme
                 }
 
-                // --- Your app after successful login
+                // ------ Your original app flow (unchanged) ------
                 val nav = rememberNavController()
                 val context = LocalContext.current
                 val scope = rememberCoroutineScope()
@@ -88,6 +94,7 @@ class MainActivity : ComponentActivity() {
                         composable("detect") {
                             DetectScreen(
                                 onConfirm = { confirmedLabel ->
+                                    // mark source for logging later
                                     nav.currentBackStackEntry?.savedStateHandle?.set("lastSource", "gallery")
                                     nav.navigate("portion/$confirmedLabel")
                                 },
@@ -154,6 +161,7 @@ class MainActivity : ComponentActivity() {
                                 foodId = foodId,
                                 repo = caloriesRepo,
                                 onComputed = { result: KcalResult ->
+                                    // carry forward source ("gallery" | "camera" | "manual")
                                     val source = nav.previousBackStackEntry
                                         ?.savedStateHandle
                                         ?.get<String>("lastSource") ?: "unknown"
@@ -198,11 +206,13 @@ class MainActivity : ComponentActivity() {
 
                         // Food log
                         composable("foodlog") {
+                            // Re-read each time we navigate here
                             val items = mealLog.today()
                             FoodLogScreen(
                                 items = items,
                                 repo = mealLog,
                                 onRefresh = {
+                                    // Easiest refresh is to re-navigate to the same route
                                     nav.popBackStack()
                                     nav.navigate("foodlog")
                                 },
@@ -214,8 +224,9 @@ class MainActivity : ComponentActivity() {
 
                         // Settings
                         composable("settings") {
+                            // Reuse the earlier prefsRepo to avoid the unused warning
                             SettingsScreen(
-                                prefs = PrefsRepo(this@MainActivity),
+                                prefs = prefsRepo,
                                 onBack = { nav.popBackStack() }
                             )
                         }

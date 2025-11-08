@@ -6,196 +6,241 @@ import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
 import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width // <-- add this
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CameraAlt
+import androidx.compose.material.icons.filled.Image
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.material3.TopAppBar
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.example.calorie_counter.ImageClassifier
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.tensorflow.lite.support.common.FileUtil
+import com.example.calorie_counter.ImageClassifier
 
-data class UiPred(val label: String, val pct: Float)
-
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DetectScreen(
-    onConfirm: (confirmedLabel: String) -> Unit,
+    onConfirm: (String) -> Unit,
     onManual: () -> Unit,
     onOpenCamera: () -> Unit,
-    onOpenSettings: () -> Unit,
-    modifier: Modifier = Modifier
+    onOpenSettings: () -> Unit
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
-    // Lazily load labels & create classifier once
-    val labels by remember {
-        mutableStateOf(FileUtil.loadLabels(context, "labels.txt"))
-    }
-    val classifier by remember {
-        mutableStateOf(ImageClassifier(context, labels, threads = 3))
-    }
-    DisposableEffect(Unit) { onDispose { classifier.close() } }
+    var pickedBitmap by remember { mutableStateOf<Bitmap?>(null) }
+    var isLoading by remember { mutableStateOf(false) }
+    var error by remember { mutableStateOf<String?>(null) }
+    var lastPrediction by remember { mutableStateOf<String?>(null) }
 
-    var bitmap by remember { mutableStateOf<Bitmap?>(null) }
-    var preds by remember { mutableStateOf<List<UiPred>>(emptyList()) }
-    var selectedIdx by remember { mutableStateOf<Int?>(null) }
-    var running by remember { mutableStateOf(false) }
-    var status by remember { mutableStateOf("Pick or capture a photo to start") }
-
-    // Gallery picker
-    val picker = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.PickVisualMedia()
-    ) { uri ->
-        if (uri != null) {
-            preds = emptyList()
-            selectedIdx = null
-            status = "Classifying…"
-            running = true
-
-            scope.launch {
-                val bmp = loadBitmap(context, uri)
-                bitmap = bmp
-                val p = withContext(Dispatchers.Default) {
-                    classifier.classify(bmp!!, topK = 3)
-                        .map { UiPred(it.label, it.score) }
-                }
-                preds = p
-                running = false
-                val top1 = p.firstOrNull()?.pct ?: 0f
-                status = if (top1 >= 0.75f) {
-                    selectedIdx = 0
-                    "Top-1 ≥ 0.75 — auto-selected"
-                } else {
-                    "Top-1 < 0.75 — please choose"
-                }
-            }
-        }
+    val galleryPicker = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        error = null
+        lastPrediction = null
+        if (uri == null) return@rememberLauncherForActivityResult
+        pickedBitmap = decodeBitmap(context, uri)
     }
 
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            "Detect Food",
-            style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
-        )
-        Spacer(Modifier.height(12.dp))
-        Text(status)
-
-        Spacer(Modifier.height(16.dp))
-
-        // Image preview
-        bitmap?.let { bm ->
-            Image(
-                bitmap = bm.asImageBitmap(),
-                contentDescription = "preview",
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(220.dp)
-                    .clip(RoundedCornerShape(12.dp))
-                    .border(1.dp, Color.LightGray, RoundedCornerShape(12.dp))
-            )
-            Spacer(Modifier.height(16.dp))
-        }
-
-        // Action buttons row
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Button(
-                enabled = !running,
-                onClick = {
-                    picker.launch(
-                        PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
-                    )
-                }
-            ) { Text(if (running) "Classifying…" else "Pick Photo") }
-
-            OutlinedButton(
-                enabled = !running,
-                onClick = { onOpenCamera() }
-            ) { Text("Use Camera") }
-        }
-
-        Spacer(Modifier.height(8.dp))
-        OutlinedButton(
-            enabled = !running,
-            onClick = { onOpenSettings() }
-        ) { Text("Settings") }
-
-        Spacer(Modifier.height(16.dp))
-
-        // Top-3 predictions list
-        if (preds.isNotEmpty()) {
-            Column(Modifier.fillMaxWidth()) {
-                preds.forEachIndexed { idx, p ->
-                    val selected = selectedIdx == idx
-                    Row(
-                        Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 6.dp)
-                            .clip(RoundedCornerShape(24.dp))
-                            .border(
-                                width = if (selected) 2.dp else 1.dp,
-                                color = if (selected) MaterialTheme.colorScheme.primary else Color.LightGray,
-                                shape = RoundedCornerShape(24.dp)
-                            )
-                            .clickable { selectedIdx = idx },
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = "${p.label} — ${"%.1f".format(p.pct * 100)}%",
-                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp),
-                            color = if (selected) MaterialTheme.colorScheme.primary
-                            else MaterialTheme.colorScheme.onSurface
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Detect from Gallery") },
+                navigationIcon = {
+                    IconButton(onClick = onOpenSettings) {
+                        Icon(
+                            imageVector = Icons.Filled.Settings,
+                            contentDescription = "Settings"
                         )
+                    }
+                },
+                actions = {
+                    IconButton(onClick = onOpenCamera) {
+                        Icon(Icons.Filled.CameraAlt, contentDescription = "Open camera")
+                    }
+                }
+            )
+        }
+    ) { inner ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(inner)
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Top
+        ) {
+            ElevatedCard(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        "Choose a food photo and let the model detect it.",
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                    Spacer(Modifier.height(12.dp))
+
+                    Button(
+                        modifier = Modifier.fillMaxWidth(),
+                        onClick = { galleryPicker.launch("image/*") }
+                    ) {
+                        Icon(Icons.Filled.Image, contentDescription = null)
+                        Spacer(Modifier.width(8.dp)) // works now
+                        Text("Pick from Gallery")
+                    }
+
+                    Spacer(Modifier.height(8.dp))
+
+                    Button(
+                        modifier = Modifier.fillMaxWidth(),
+                        onClick = onManual
+                    ) {
+                        Text("Enter Manually")
                     }
                 }
             }
-            Spacer(Modifier.height(8.dp))
-            OutlinedButton(onClick = onManual) {
-                Text("Not in list → Manual search")
-            }
+
             Spacer(Modifier.height(16.dp))
-            Button(
-                enabled = selectedIdx != null && !running,
-                onClick = { onConfirm(preds[selectedIdx!!].label) }
-            ) { Text("Confirm") }
+
+            pickedBitmap?.let { bm ->
+                ElevatedCard(
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            "Preview",
+                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold)
+                        )
+                        Spacer(Modifier.height(12.dp))
+                        Image(
+                            bitmap = bm.asImageBitmap(),
+                            contentDescription = "Chosen image",
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(200.dp),
+                            contentScale = ContentScale.Crop
+                        )
+                        Spacer(Modifier.height(12.dp))
+
+                        Button(
+                            enabled = !isLoading,
+                            onClick = {
+                                error = null
+                                lastPrediction = null
+                                isLoading = true
+                                scope.launch {
+                                    try {
+                                        val labels = withContext(Dispatchers.IO) {
+                                            FileUtil.loadLabels(context, "labels.txt")
+                                        }
+                                        val top1 = withContext(Dispatchers.Default) {
+                                            ImageClassifier(context, labels, threads = 3).use { clf ->
+                                                clf.classify(bm, topK = 3).firstOrNull()
+                                            }
+                                        }
+                                        if (top1 != null) {
+                                            lastPrediction = top1.label
+                                        } else {
+                                            error = "No prediction."
+                                        }
+                                    } catch (t: Throwable) {
+                                        error = t.localizedMessage ?: "Classification failed."
+                                    } finally {
+                                        isLoading = false
+                                    }
+                                }
+                            }
+                        ) {
+                            Text(if (isLoading) "Detecting…" else "Detect")
+                        }
+
+                        if (isLoading) {
+                            Spacer(Modifier.height(12.dp))
+                            CircularProgressIndicator()
+                        }
+
+                        error?.let {
+                            Spacer(Modifier.height(12.dp))
+                            Text(
+                                text = it,
+                                color = MaterialTheme.colorScheme.error,
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+                        }
+
+                        lastPrediction?.let { label ->
+                            Spacer(Modifier.height(12.dp))
+                            Text(
+                                text = "Top result: $label",
+                                style = MaterialTheme.typography.titleMedium
+                            )
+                            Spacer(Modifier.height(8.dp))
+                            Button(
+                                modifier = Modifier.fillMaxWidth(),
+                                onClick = { onConfirm(label) }
+                            ) { Text("Use this result") }
+                        }
+                    }
+                }
+            }
         }
     }
 }
 
-private fun loadBitmap(context: android.content.Context, uri: Uri): Bitmap? {
+/** Decode a content Uri into a mutable ARGB_8888 Bitmap. */
+private fun decodeBitmap(context: android.content.Context, uri: Uri): Bitmap? {
     return try {
         if (Build.VERSION.SDK_INT >= 28) {
-            val source = ImageDecoder.createSource(context.contentResolver, uri)
-            ImageDecoder.decodeBitmap(source).copy(Bitmap.Config.ARGB_8888, true)
+            val src = ImageDecoder.createSource(context.contentResolver, uri)
+            ImageDecoder.decodeBitmap(src).copy(Bitmap.Config.ARGB_8888, true)
         } else {
             @Suppress("DEPRECATION")
             MediaStore.Images.Media.getBitmap(context.contentResolver, uri)
                 .copy(Bitmap.Config.ARGB_8888, true)
         }
-    } catch (_: Exception) { null }
+    } catch (_: Exception) {
+        null
+    }
 }
